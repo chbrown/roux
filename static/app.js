@@ -28,12 +28,23 @@ app.directive('log', function() {
   };
 });
 
-app.directive('list', function() {
+app.directive('json', function() {
   return {
     restrict: 'E',
-    templateUrl: '/static/list.html',
-    scope: {
-      items: '='
+    templateUrl: '/static/json.html',
+    replace: true,
+    scope: {},
+    require: 'ngModel',
+    link: function(scope, el, attrs, ngModel) {
+      ngModel.$formatters.push(function(model) {
+        // convert a list of javascript entities into strings
+        return model.map(function(item) {
+          return JSON.stringify(item, null, '  ');
+        });
+      });
+      ngModel.$render = function() {
+        scope.items = ngModel.$viewValue;
+      };
     }
   };
 });
@@ -134,9 +145,14 @@ app.controller('MonitorCtrl', function($scope) {
 app.controller('WorkerCtrl', function($scope, $localStorage, $http) {
   var app_prefix = '/apps/worker';
 
+  $scope.queue = [];
+  $scope.incomplete = [];
+  $scope.done = [];
+
   var glob = function(pattern, callback) {
     // callback signature: function(err, filenames)
     // e.g., callback(null, ['13a.txt', '14b.txt', '15c.csv']);
+    p('expanding glob on server:', pattern);
     $http({method: 'POST', url: app_prefix + '/glob', data: pattern}).then(function(res) {
         // res has .data, .status, .headers, and .config values
         callback(null, res.data);
@@ -155,18 +171,31 @@ app.controller('WorkerCtrl', function($scope, $localStorage, $http) {
     ].join('\n')
   });
 
-  $scope.evaluate = function() {
+  var getTasks = function(callback) {
     // not sure why the parens are needed
     var func_expression = '(' + $scope.$storage.func + ')';
     var func = eval(func_expression);
-    // p('func', func);
     func(function(err, tasks) {
-      // force func to be async
+      // force func to behave async (to avoid double-$apply'ing)
       setTimeout(function() {
-        $scope.$apply(function() {
-          $scope.preview = tasks;
-        });
+        callback(err, tasks);
       }, 0);
+    });
+  };
+
+  $scope.evaluate = function() {
+    getTasks(function(err, tasks) {
+      $scope.$apply(function() {
+        $scope.preview = tasks;
+      });
+    });
+  };
+
+  $scope.add = function() {
+    getTasks(function(err, tasks) {
+      $scope.$apply(function() {
+        Array.prototype.push.apply($scope.queue, tasks);
+      });
     });
   };
 

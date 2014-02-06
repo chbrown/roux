@@ -33,10 +33,10 @@ R.get('/apps/worker/', function(req, res) {
 /** POST /glob
 Expand a glob on the server filesystem */
 R.post('/apps/worker/glob', function(req, res, m) {
-  var pattern = m[1];
-  logger.info('Expanding glob: %s', pattern);
   req.readToEnd('utf8', function(err, pattern) {
     if (err) return die(res, err);
+
+    logger.info('Expanding glob: %s', pattern);
 
     glob(pattern, {nocase: false}, function (err, files) {
       if (err) return die(res, err);

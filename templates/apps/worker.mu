@@ -15,22 +15,24 @@
         The callback has the signature: function(err, filenames)
         It is cached per page-load.
       </p>
-      <button ng-click="evaluate()">Preview</button>
-      <list items="preview"></list>
-      <!-- <button ng-click="add()">Add</button> -->
+      <button ng-click="evaluate()">Evaluate and preview</button>
+      <div style="font-size: 8pt">
+        <json ng-model="preview"></json>
+      </div>
+      <button ng-click="add()" ng-show="preview.length">Add to queue</button>
     </div>
     <table style="width: 100%; border-top: 1px solid #CCC;">
       <tr>
         <td>
-          <h4>Queue</h4>
+          <h4>Queue ({{queue.length}})</h4>
           <list items="queue"></list>
         </td>
         <td>
-          <h4>Incomplete</h4>
+          <h4>Incomplete ({{incomplete.length}})</h4>
           <list items="incomplete"></list>
         </td>
         <td>
-          <h4>Done</h4>
+          <h4>Done ({{done.length}})</h4>
           <list items="done"></list>
         </td>
       </tr>

@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-  <title>Harder UI</title>
+  <title>Roux UI</title>
   <script>
   var started = new Date();
   var p = console.log.bind(console);

@@ -36,6 +36,8 @@ section {
 }
 .list code {
   overflow: hidden;
+  border-top: 1px solid #DDD;
+  padding-bottom: 1px;
 }
 
 textarea {
@@ -44,4 +46,11 @@ textarea {
   /*padding: 0;*/
 
   font: 8pt monospace;
+}
+
+.json ol {
+}
+.json li {
+  white-space: pre-wrap;
+  font-family: monospace;
 }
