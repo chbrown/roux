@@ -13,6 +13,7 @@
   <script src="/static/lib/ngStorage.min.js"></script>
   <script src="/static/lib/underscore.min.js"></script>
   <script src="/static/lib/url.js"></script>
+  <script src="/static/lib/textarea.js"></script>
   <script src="/static/app.js"></script>
 </head>
 <body>

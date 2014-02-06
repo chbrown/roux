@@ -1,4 +1,4 @@
-/*jslint browser: true, devel: true */ /*globals _, p, angular, Url */
+/*jslint browser: true, devel: true */ /*globals _, p, angular, Url, Textarea */
 var app = angular.module('app', ['ngStorage']);
 
 var indexWhere = function(xs, props) {
@@ -27,6 +27,27 @@ app.directive('log', function() {
     }
   };
 });
+
+app.directive('list', function() {
+  return {
+    restrict: 'E',
+    templateUrl: '/static/list.html',
+    scope: {
+      items: '='
+    }
+  };
+});
+
+app.directive('enhanced', function() {
+  return {
+    restrict: 'A',
+    link: function(scope, el, attrs) {
+      Textarea.enhance(el[0]);
+    }
+  };
+});
+
+
 
 app.controller('HarderCtrl', function($scope, $http) {
   var app_prefix = '/apps/harder';
@@ -108,4 +129,45 @@ app.controller('MonitorCtrl', function($scope) {
       $scope.monitor.push(ev.data);
     });
   };
+});
+
+app.controller('WorkerCtrl', function($scope, $localStorage, $http) {
+  var app_prefix = '/apps/worker';
+
+  var glob = function(pattern, callback) {
+    // callback signature: function(err, filenames)
+    // e.g., callback(null, ['13a.txt', '14b.txt', '15c.csv']);
+    $http({method: 'POST', url: app_prefix + '/glob', data: pattern}).then(function(res) {
+        // res has .data, .status, .headers, and .config values
+        callback(null, res.data);
+      }, function(res) {
+        p('$http glob resolution failed', res);
+        callback(res);
+      });
+  };
+
+  $scope.$storage = $localStorage.$default({
+    func: [
+      'function(callback) {',
+      '  callback(err, tasks);',
+      '}',
+      ''
+    ].join('\n')
+  });
+
+  $scope.evaluate = function() {
+    // not sure why the parens are needed
+    var func_expression = '(' + $scope.$storage.func + ')';
+    var func = eval(func_expression);
+    // p('func', func);
+    func(function(err, tasks) {
+      // force func to be async
+      setTimeout(function() {
+        $scope.$apply(function() {
+          $scope.preview = tasks;
+        });
+      }, 0);
+    });
+  };
+
 });
