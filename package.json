@@ -1,0 +1,52 @@
+{
+  "name": "roux",
+  "version": "0.0.1",
+  "description": "Redis front-end apps",
+  "keywords": ["redis", "front-end", "apps", "ui"],
+  "homepage": "https://github.com/chbrown/roux",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chbrown/roux.git"
+  },
+  "bugs": {
+    "email": "Christopher Brown <io@henrian.com>",
+    "url": "http://github.com/chbrown/roux/issues"
+  },
+  "license": "MIT",
+  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
+  "dependencies": {
+    "amulet": "*",
+    "async": "*",
+    "cookies": "git://github.com/chbrown/cookies.git",
+    "formidable": "*",
+    "hiredis": "*",
+    "http-enhanced": "*",
+    "loge": "*",
+    "optimist": "*",
+    "redis": "*",
+    "regex-router": "*",
+    "request": "*",
+    "send": "*",
+    "streaming": "*",
+    "sv": "*",
+    "underscore": "*",
+    "ws": "*"
+  },
+  "staticDependencies": {
+    "angular": "*",
+    "ngStorage": {
+      "url": "git://github.com/gsklee/ngStorage.git",
+      "filter": ["ngStorage.js", "ngStorage.min.js"]
+    },
+    "misc-js": "git://github.com/chbrown/misc-js.git",
+    "underscore": "*"
+  },
+  "staticPattern": "static/lib/{file}",
+  "devDependencies": {
+  },
+  "bin": {
+    "roux": "./server.js"
+  },
+  "scripts": {
+  }
+}
