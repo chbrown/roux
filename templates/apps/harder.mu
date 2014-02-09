@@ -1,5 +1,6 @@
 <div ng-app="app">
   <section ng-controller="HarderCtrl">
+    <div class="status">WebSocket: {{status}}</div>
     <h2>Hosts</h2>
     <div ng-hide="hosts.length">(No hosts detected) </div>
     <div ng-repeat="host in hosts" class="host">

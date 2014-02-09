@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*jslint node: true */
 var http = require('http-enhanced');
 var path = require('path');

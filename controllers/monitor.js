@@ -19,11 +19,17 @@ R.any('/monitor/viewer', function(req, res) {
   amulet.stream(['layout.mu', 'monitor-viewer.mu'], {}).pipe(res);
 });
 
-R.any('/monitor', function(req) {
-  // kind of hackish way to do this, but upgrade requests are hackable
-  monitor_server.handleUpgrade(req, req.socket, req.upgradeHead, function(client) {
-    logger.debug('websocket connection established for monitor (url: %s)', client.upgradeReq.url);
-  });
+R.get('/monitor', function(req, res) {
+  // kind of hackish way to do this, but upgrade requests are hackworthy
+  if (req.upgrade) {
+    // don't use res here!
+    monitor_server.handleUpgrade(req, req.socket, req.upgradeHead, function(client) {
+      logger.debug('websocket connection established for monitor (url: %s)', client.upgradeReq.url);
+    });
+  }
+  else {
+    res.redirect('/monitor/viewer');
+  }
 });
 
 (function monitor_loop() {
@@ -38,7 +44,7 @@ R.any('/monitor', function(req) {
     var local_datetime_str = toLocalISOString(date);
     // util.inspect(args)
     var message = local_datetime_str + ' $ ' + args.join(' ');
-    logger.debug('monitor:', message);
+    // logger.debug('monitor:', message);
     monitor_server.clients.forEach(function(client) {
       client.send(message);
     });

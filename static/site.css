@@ -14,6 +14,12 @@ section {
   max-width: 800px;
 }
 
+textarea {
+  box-sizing: border-box;
+  min-height: 120px;
+  font: 8pt monospace;
+}
+
 .host {
   margin: 10px 0;
   padding: 5px;
@@ -40,12 +46,9 @@ section {
   padding-bottom: 1px;
 }
 
-textarea {
-  box-sizing: border-box;
-  min-height: 120px;
-  /*padding: 0;*/
-
-  font: 8pt monospace;
+.status {
+  float: right;
+  font-size: 90%;
 }
 
 .json ol {

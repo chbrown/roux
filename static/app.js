@@ -1,4 +1,5 @@
-/*jslint browser: true, devel: true */ /*globals _, p, angular, Url, Textarea */
+/*jslint browser: true, devel: true */
+/*globals _, p, angular, Url, Textarea, EventEmitter, ReconnectingSocket */
 var app = angular.module('app', ['ngStorage']);
 
 var indexWhere = function(xs, props) {
@@ -103,9 +104,13 @@ app.controller('HarderCtrl', function($scope, $http) {
     });
 
   // set up websockets
-  var ws_url = Url.parse(window.location).merge({protocol: 'ws'});
-  var action_websocket = new WebSocket(ws_url.merge({path: app_prefix + '/action'}));
-  action_websocket.onmessage = function(ev) {
+  var socket = new ReconnectingSocket(app_prefix + '/action');
+  socket.on('status', function(ev) {
+    $scope.$apply(function() {
+      $scope.status = ev;
+    });
+  });
+  socket.on('message', function(ev) {
     // action messages consist of a host and a message arising from that host
     // the local server combines them for the benefit of sending them across websockets to this app
     // but in redis they are send across unique channels.
@@ -120,26 +125,33 @@ app.controller('HarderCtrl', function($scope, $http) {
         $scope.refresh(host);
       }
     });
-  };
-  action_websocket.onclose = function(ev) {
-    p('oh no, closing!', ev);
-  };
-  action_websocket.onerror = function(ev) {
-    p('action websocket error:', ev);
-  };
+  });
 });
 
 app.controller('MonitorCtrl', function($scope) {
   $scope.monitor = [];
 
-  var monitor_websocket_url = Url.parse(window.location).merge({protocol: 'ws', path: '/monitor'});
-  var monitor_websocket = new WebSocket(monitor_websocket_url);
-  // monitor_websocket.addEventListener('message', function(ev) {})
-  monitor_websocket.onmessage = function(ev) {
+  // $scope.$applyFn = function(fn) {
+  //   var scope = this;
+  //   return function() {
+  //     var original_arguments = arguments;
+  //     scope.$apply(function() {
+  //       return fn.apply(null, original_arguments);
+  //     });
+  //   };
+  // };
+
+  var socket = new ReconnectingSocket('/monitor');
+  socket.on('status', function(ev) {
+    $scope.$apply(function() {
+      $scope.status = ev;
+    });
+  });
+  socket.on('message', function(ev) {
     $scope.$apply(function() {
       $scope.monitor.push(ev.data);
     });
-  };
+  });
 });
 
 app.controller('WorkerCtrl', function($scope, $localStorage, $http) {
