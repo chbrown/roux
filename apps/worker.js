@@ -7,9 +7,6 @@ var http = require('http-enhanced');
 var logger = require('loge');
 var redis = require('redis');
 var Router = require('regex-router');
-var ws = require('ws');
-
-var action_server = new ws.Server({noServer: true});
 
 var ns = function() {
   return Array.prototype.concat.apply(['worker'], arguments).join(':');
